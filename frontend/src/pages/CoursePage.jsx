@@ -6,9 +6,6 @@ import CourseSidebar from '../components/CourseSidebar';
 import VideoPlayer from '../components/VideoPlayer';
 import HomePage from './HomePage';
 
-// Course ID from environment or fallback
-const COURSE_ID = import.meta.env.VITE_COURSE_ID;
-
 /**
  * Main course page with two-pane layout:
  * - ProgressBar at top
@@ -21,14 +18,10 @@ const CoursePage = () => {
   useEffect(() => {
     const loadData = async () => {
       await fetchCourses();
-
-      if (COURSE_ID) {
-        await selectCourse(COURSE_ID);
-      }
     };
 
     loadData();
-  }, [fetchCourses, selectCourse]);
+  }, [fetchCourses]);
 
   const handleStartCourse = async (courseId) => {
     const selectedCourse = await selectCourse(courseId || course?._id);

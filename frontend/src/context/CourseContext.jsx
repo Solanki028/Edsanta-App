@@ -29,9 +29,13 @@ export const CourseProvider = ({ children }) => {
       setCourses(data || []);
 
       if (data?.length > 0) {
-        setCourse(data[0]);
-        setModules(data[0].modules || []);
-        setActiveModule(data[0].modules?.[0] || null);
+        setCourse((currentCourse) => currentCourse || data[0]);
+        setModules((currentModules) =>
+          currentModules.length > 0 ? currentModules : data[0].modules || []
+        );
+        setActiveModule((currentModule) =>
+          currentModule || data[0].modules?.[0] || null
+        );
       }
 
       return data || [];
@@ -109,6 +113,18 @@ export const CourseProvider = ({ children }) => {
     async (courseId) => {
       if (!courseId) return null;
 
+      const catalogCourse = courses.find((item) => item._id === courseId);
+      if (catalogCourse) {
+        setCourse(catalogCourse);
+        setModules(catalogCourse.modules || []);
+        setActiveModule(catalogCourse.modules?.[0] || null);
+        setCompletedModules(new Set());
+        setPercentage(0);
+        setLastWatchedPositions({});
+        await fetchProgress(courseId);
+        return catalogCourse;
+      }
+
       const selectedCourse = await fetchCourse(courseId);
       if (selectedCourse) {
         await fetchProgress(courseId);
@@ -116,7 +132,7 @@ export const CourseProvider = ({ children }) => {
 
       return selectedCourse;
     },
-    [fetchCourse, fetchProgress]
+    [courses, fetchCourse, fetchProgress]
   );
 
   /**
