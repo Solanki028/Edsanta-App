@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCourse } from '../context/CourseContext';
 import ProgressBar from '../components/ProgressBar';
 import CourseSidebar from '../components/CourseSidebar';
 import VideoPlayer from '../components/VideoPlayer';
+import HomePage from './HomePage';
 
 // Course ID from environment or fallback
 const COURSE_ID = import.meta.env.VITE_COURSE_ID;
@@ -14,6 +15,7 @@ const COURSE_ID = import.meta.env.VITE_COURSE_ID;
  */
 const CoursePage = () => {
   const { loading, error, fetchCourse, fetchProgress } = useCourse();
+  const [isCourseOpen, setIsCourseOpen] = useState(false);
 
   useEffect(() => {
     if (!COURSE_ID) {
@@ -65,6 +67,10 @@ const CoursePage = () => {
         </div>
       </div>
     );
+  }
+
+  if (!isCourseOpen) {
+    return <HomePage onStartCourse={() => setIsCourseOpen(true)} />;
   }
 
   return (
