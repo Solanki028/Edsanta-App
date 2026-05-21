@@ -27,11 +27,24 @@ const VideoPlayer = () => {
    * Bonus: Set video to resume position when module changes
    */
   useEffect(() => {
-    if (activeModule && videoRef.current) {
-      const resumePos = getResumePosition(activeModule._id);
-      videoRef.current.currentTime = resumePos;
-      lastSavedPositionRef.current = resumePos;
+    if (activeModule) {
+      lastSavedPositionRef.current = getResumePosition(activeModule._id);
     }
+  }, [activeModule, getResumePosition]);
+
+  const handleLoadedMetadata = useCallback(() => {
+    if (!activeModule || !videoRef.current) return;
+
+    const resumePos = getResumePosition(activeModule._id);
+    const video = videoRef.current;
+
+    if (resumePos > 0 && Number.isFinite(video.duration)) {
+      video.currentTime = Math.min(resumePos, Math.max(video.duration - 1, 0));
+    } else {
+      video.currentTime = resumePos;
+    }
+
+    lastSavedPositionRef.current = resumePos;
   }, [activeModule, getResumePosition]);
 
   /**
@@ -76,6 +89,7 @@ const VideoPlayer = () => {
             key={activeModule._id}
             className="w-full aspect-video"
             controls
+            onLoadedMetadata={handleLoadedMetadata}
             onPause={handlePause}
             onTimeUpdate={handleTimeUpdate}
             src={activeModule.videoUrl}

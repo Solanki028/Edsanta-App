@@ -36,7 +36,7 @@ const getProgress = async (req, res) => {
 const markModuleComplete = async (req, res) => {
   try {
     const { userId, moduleId } = req.params;
-    const { courseId, lastWatchedPosition } = req.body;
+    const { courseId } = req.body;
 
     if (!courseId) {
       return res.status(400).json({ message: 'courseId is required in request body' });
@@ -62,11 +62,6 @@ const markModuleComplete = async (req, res) => {
       progress.completedModules.push(moduleId);
     }
 
-    // Bonus: Update last watched position if provided
-    if (lastWatchedPosition !== undefined) {
-      progress.lastWatchedPositions.set(moduleId, lastWatchedPosition);
-    }
-
     // Recalculate completion percentage
     const course = await Course.findById(courseId);
     if (!course) {
@@ -85,4 +80,44 @@ const markModuleComplete = async (req, res) => {
   }
 };
 
-module.exports = { getProgress, markModuleComplete };
+/**
+ * @desc    Save a user's last watched timestamp for a module
+ * @route   PUT /api/progress/:userId/:moduleId/position
+ * @access  Public
+ */
+const saveWatchPosition = async (req, res) => {
+  try {
+    const { userId, moduleId } = req.params;
+    const { courseId, position } = req.body;
+
+    if (!courseId) {
+      return res.status(400).json({ message: 'courseId is required in request body' });
+    }
+
+    const numericPosition = Number(position);
+    if (!Number.isFinite(numericPosition) || numericPosition < 0) {
+      return res.status(400).json({ message: 'position must be a valid number' });
+    }
+
+    let progress = await Progress.findOne({ userId, courseId });
+
+    if (!progress) {
+      progress = new Progress({
+        userId,
+        courseId,
+        completedModules: [],
+        lastWatchedPositions: new Map(),
+      });
+    }
+
+    progress.lastWatchedPositions.set(moduleId, numericPosition);
+    await progress.save();
+
+    res.json(progress);
+  } catch (error) {
+    console.error('Error saving watch position:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { getProgress, markModuleComplete, saveWatchPosition };

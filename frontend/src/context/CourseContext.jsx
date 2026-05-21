@@ -186,10 +186,13 @@ export const CourseProvider = ({ children }) => {
 
       // Fire-and-forget save to backend (non-blocking)
       try {
-        await axios.put(`${API_URL}/api/progress/${USER_ID}/${moduleId}`, {
-          courseId: course._id,
-          lastWatchedPosition: position,
-        });
+        await axios.put(
+          `${API_URL}/api/progress/${USER_ID}/${moduleId}/position`,
+          {
+            courseId: course._id,
+            position,
+          }
+        );
       } catch (err) {
         console.error('Error saving watch position:', err);
       }
