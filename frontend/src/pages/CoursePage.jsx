@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { useCourse } from '../context/CourseContext';
 import ProgressBar from '../components/ProgressBar';
 import CourseSidebar from '../components/CourseSidebar';
@@ -14,38 +15,27 @@ const COURSE_ID = import.meta.env.VITE_COURSE_ID;
  * - CourseSidebar (left) + VideoPlayer (right)
  */
 const CoursePage = () => {
-  const { loading, error, fetchCourse, fetchProgress } = useCourse();
+  const { course, loading, error, fetchCourses, selectCourse } = useCourse();
   const [isCourseOpen, setIsCourseOpen] = useState(false);
 
   useEffect(() => {
-    if (!COURSE_ID) {
-      console.error('VITE_COURSE_ID is not set in environment variables');
-      return;
-    }
-
     const loadData = async () => {
-      await fetchCourse(COURSE_ID);
-      await fetchProgress(COURSE_ID);
+      await fetchCourses();
+
+      if (COURSE_ID) {
+        await selectCourse(COURSE_ID);
+      }
     };
 
     loadData();
-  }, [fetchCourse, fetchProgress]);
+  }, [fetchCourses, selectCourse]);
 
-  if (!COURSE_ID) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-8">
-          <h2 className="text-xl font-bold text-red-600 mb-2">Configuration Error</h2>
-          <p className="text-gray-600">
-            Please set <code className="bg-gray-100 px-2 py-1 rounded text-sm">VITE_COURSE_ID</code> in your frontend <code className="bg-gray-100 px-2 py-1 rounded text-sm">.env</code> file.
-          </p>
-          <p className="text-gray-500 text-sm mt-2">
-            Run <code className="bg-gray-100 px-2 py-1 rounded text-sm">npm run seed</code> in the backend to get a Course ID.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleStartCourse = async (courseId) => {
+    const selectedCourse = await selectCourse(courseId || course?._id);
+    if (selectedCourse) {
+      setIsCourseOpen(true);
+    }
+  };
 
   if (loading) {
     return (
@@ -70,11 +60,25 @@ const CoursePage = () => {
   }
 
   if (!isCourseOpen) {
-    return <HomePage onStartCourse={() => setIsCourseOpen(true)} />;
+    return <HomePage onStartCourse={handleStartCourse} />;
   }
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setIsCourseOpen(false)}
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to courses
+        </button>
+        <p className="min-w-0 truncate text-sm font-semibold text-gray-700">
+          {course?.title}
+        </p>
+      </div>
+
       {/* Global Progress Bar */}
       <ProgressBar />
 

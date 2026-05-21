@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const USER_ID = 'demo-user-123'; // Hardcoded userId (no auth required per assessment)
 
 export const CourseProvider = ({ children }) => {
+  const [courses, setCourses] = useState([]);
   const [course, setCourse] = useState(null);
   const [modules, setModules] = useState([]);
   const [activeModule, setActiveModule] = useState(null);
@@ -15,6 +16,33 @@ export const CourseProvider = ({ children }) => {
   const [lastWatchedPositions, setLastWatchedPositions] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  /**
+   * Fetch catalog data for the home page.
+   */
+  const fetchCourses = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data } = await axios.get(`${API_URL}/api/courses`);
+      setCourses(data || []);
+
+      if (data?.length > 0) {
+        setCourse(data[0]);
+        setModules(data[0].modules || []);
+        setActiveModule(data[0].modules?.[0] || null);
+      }
+
+      return data || [];
+    } catch (err) {
+      console.error('Error fetching courses:', err);
+      setError(err.response?.data?.message || 'Failed to load courses');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   /**
    * Fetch course data with populated modules
@@ -31,10 +59,18 @@ export const CourseProvider = ({ children }) => {
       // Set first module as active by default
       if (data.modules?.length > 0) {
         setActiveModule(data.modules[0]);
+      } else {
+        setActiveModule(null);
       }
+
+      setCompletedModules(new Set());
+      setPercentage(0);
+      setLastWatchedPositions({});
+      return data;
     } catch (err) {
       console.error('Error fetching course:', err);
       setError(err.response?.data?.message || 'Failed to load course data');
+      return null;
     } finally {
       setLoading(false);
     }
@@ -68,6 +104,20 @@ export const CourseProvider = ({ children }) => {
       // Non-critical: progress starts at 0 if fetch fails
     }
   }, []);
+
+  const selectCourse = useCallback(
+    async (courseId) => {
+      if (!courseId) return null;
+
+      const selectedCourse = await fetchCourse(courseId);
+      if (selectedCourse) {
+        await fetchProgress(courseId);
+      }
+
+      return selectedCourse;
+    },
+    [fetchCourse, fetchProgress]
+  );
 
   /**
    * Mark a module as complete — uses OPTIMISTIC UI UPDATE
@@ -143,6 +193,7 @@ export const CourseProvider = ({ children }) => {
 
   const value = {
     course,
+    courses,
     modules,
     activeModule,
     completedModules,
@@ -151,8 +202,10 @@ export const CourseProvider = ({ children }) => {
     error,
     userId: USER_ID,
     setActiveModule,
+    fetchCourses,
     fetchCourse,
     fetchProgress,
+    selectCourse,
     markComplete,
     saveWatchPosition,
     getResumePosition,

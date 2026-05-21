@@ -17,6 +17,12 @@ import { useCourse } from '../context/CourseContext';
 const courseImage =
   'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80';
 
+const courseImages = [
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80',
+];
+
 const formatCreatedDate = (dateValue) => {
   if (!dateValue) return 'Recently added';
 
@@ -65,10 +71,17 @@ const formatTotalDuration = (modules) => {
 };
 
 const HomePage = ({ onStartCourse }) => {
-  const { course, modules, completedModules, percentage } = useCourse();
+  const { course, courses, modules, completedModules, percentage } =
+    useCourse();
 
-  const totalDuration = formatTotalDuration(modules);
-  const createdDate = formatCreatedDate(course?.createdAt);
+  const highlightedCourse = course || courses[0];
+  const highlightedModules = highlightedCourse?.modules || modules;
+  const totalDuration = formatTotalDuration(highlightedModules);
+  const createdDate = formatCreatedDate(highlightedCourse?.createdAt);
+  const totalCatalogLessons = courses.reduce(
+    (total, item) => total + (item.modules?.length || 0),
+    0
+  );
 
   const sections = [
     {
@@ -103,7 +116,8 @@ const HomePage = ({ onStartCourse }) => {
           </div>
           <button
             type="button"
-            onClick={onStartCourse}
+            onClick={() => onStartCourse(highlightedCourse?._id)}
+            disabled={!highlightedCourse}
             className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
           >
             <PlayCircle className="h-4 w-4" />
@@ -123,23 +137,23 @@ const HomePage = ({ onStartCourse }) => {
               Learn with clarity, track progress with confidence.
             </h1>
             <p className="mt-5 max-w-2xl text-base sm:text-lg leading-8 text-gray-600">
-              Build advanced JavaScript skills through focused video modules,
-              completion tracking, and a course experience designed for steady
-              learning momentum.
+              Explore practical technology courses through focused video
+              modules, completion tracking, and a course experience designed
+              for steady learning momentum.
             </p>
 
             <div className="mt-8 grid grid-cols-3 gap-3 max-w-xl">
               <div className="rounded-lg border border-gray-200 bg-white p-4">
                 <p className="text-2xl font-bold text-gray-950">
-                  {modules.length}
+                  {courses.length}
                 </p>
-                <p className="text-xs font-medium text-gray-500">Modules</p>
+                <p className="text-xs font-medium text-gray-500">Courses</p>
               </div>
               <div className="rounded-lg border border-gray-200 bg-white p-4">
                 <p className="text-2xl font-bold text-gray-950">
-                  {totalDuration}
+                  {totalCatalogLessons}
                 </p>
-                <p className="text-xs font-medium text-gray-500">Duration</p>
+                <p className="text-xs font-medium text-gray-500">Lessons</p>
               </div>
               <div className="rounded-lg border border-gray-200 bg-white p-4">
                 <p className="text-2xl font-bold text-gray-950">
@@ -179,21 +193,22 @@ const HomePage = ({ onStartCourse }) => {
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Layers3 className="h-4 w-4" />
-                  {modules.length} lessons
+                  {highlightedModules.length} lessons
                 </span>
               </div>
 
               <h2 className="mt-4 text-2xl font-bold text-gray-950">
-                {course?.title}
+                {highlightedCourse?.title}
               </h2>
               <p className="mt-3 text-sm leading-6 text-gray-600">
-                {course?.description}
+                {highlightedCourse?.description}
               </p>
 
               <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-3">
                 <button
                   type="button"
-                  onClick={onStartCourse}
+                  onClick={() => onStartCourse(highlightedCourse?._id)}
+                  disabled={!highlightedCourse}
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
                 >
                   Start learning
@@ -207,6 +222,79 @@ const HomePage = ({ onStartCourse }) => {
             </div>
           </article>
         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+          <div>
+            <p className="text-sm font-semibold text-indigo-700">
+              Available courses
+            </p>
+            <h2 className="mt-2 text-3xl font-bold text-gray-950">
+              Choose your next learning path.
+            </h2>
+          </div>
+          <p className="text-sm text-gray-500">
+            {courses.length} courses with {totalCatalogLessons} lessons
+          </p>
+        </div>
+
+        {courses.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center">
+            <h3 className="text-lg font-bold text-gray-950">
+              No courses found
+            </h3>
+            <p className="mt-2 text-sm text-gray-500">
+              Run the backend seed script, then refresh this page.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {courses.map((item, index) => {
+              const itemDuration = formatTotalDuration(item.modules || []);
+              const image = courseImages[index % courseImages.length];
+
+              return (
+                <article
+                  key={item._id}
+                  className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm"
+                >
+                  <img
+                    src={image}
+                    alt=""
+                    className="h-44 w-full object-cover"
+                  />
+                  <div className="p-5">
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Clock3 className="h-3.5 w-3.5" />
+                        {itemDuration}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Layers3 className="h-3.5 w-3.5" />
+                        {item.modules?.length || 0} lessons
+                      </span>
+                    </div>
+                    <h3 className="mt-3 text-xl font-bold text-gray-950">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-6 text-gray-600">
+                      {item.description}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onStartCourse(item._id)}
+                      className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                    >
+                      Open course
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="border-y border-gray-200 bg-white">
@@ -247,7 +335,7 @@ const HomePage = ({ onStartCourse }) => {
             </h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {modules.slice(0, 4).map((mod, index) => (
+            {highlightedModules.slice(0, 4).map((mod, index) => (
               <div
                 key={mod._id}
                 className="rounded-lg border border-gray-200 bg-white p-4"
@@ -285,7 +373,8 @@ const HomePage = ({ onStartCourse }) => {
           </div>
           <button
             type="button"
-            onClick={onStartCourse}
+            onClick={() => onStartCourse(highlightedCourse?._id)}
+            disabled={!highlightedCourse}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-gray-950 hover:bg-gray-100 transition-colors"
           >
             Open course
