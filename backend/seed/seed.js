@@ -20,64 +20,155 @@ const seedData = async () => {
     await Progress.deleteMany({});
     console.log('Cleared existing data.');
 
-    // Create course
-    const course = await Course.create({
-      title: 'Advanced JavaScript',
-      description:
-        'Master advanced JavaScript concepts including closures, promises, async/await, prototypes, and modern ES6+ features. This course takes you from intermediate to advanced level with hands-on video lessons.',
-      modules: [],
-    });
-
-    // Module data with sample MP4 URLs
-    const modulesData = [
+    const coursesData = [
       {
-        title: 'Closures & Lexical Scope',
-        videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        duration: '12:30',
-        order: 1,
-        course: course._id,
+        title: 'Advanced JavaScript Mastery',
+        description:
+          'Master production-grade JavaScript concepts including closures, promises, async workflows, inheritance, and modern module patterns through focused long-form lessons.',
+        modules: [
+          {
+            title: 'Closures, Scope Chains, and Memory',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-5s.mp4',
+            duration: '42:15',
+          },
+          {
+            title: 'Promises, Jobs, and the Event Loop',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-5s-720p.mp4',
+            duration: '38:40',
+          },
+          {
+            title: 'Async/Await Error Handling Patterns',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-5s-360p.mp4',
+            duration: '45:25',
+          },
+          {
+            title: 'Prototypes, Classes, and Composition',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-10s.mp4',
+            duration: '41:10',
+          },
+          {
+            title: 'ES Modules, Bundling, and Tooling',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-10s-720p.mp4',
+            duration: '47:35',
+          },
+        ],
       },
       {
-        title: 'Promises & Microtask Queue',
-        videoUrl: 'https://www.w3schools.com/html/movie.mp4',
-        duration: '15:45',
-        order: 2,
-        course: course._id,
+        title: 'Frontend Engineering with React',
+        description:
+          'Build maintainable frontend applications with reusable components, hooks, state architecture, routing decisions, performance habits, and UI polish.',
+        modules: [
+          {
+            title: 'Component Design Systems',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-10s-360p.mp4',
+            duration: '44:20',
+          },
+          {
+            title: 'Hooks and Data Flow',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-15s.mp4',
+            duration: '39:55',
+          },
+          {
+            title: 'Client State and Server State',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-15s-720p.mp4',
+            duration: '52:45',
+          },
+          {
+            title: 'Responsive Interface Patterns',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-15s-360p.mp4',
+            duration: '43:30',
+          },
+          {
+            title: 'Performance and Production Builds',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-20s.mp4',
+            duration: '49:05',
+          },
+        ],
       },
       {
-        title: 'Async/Await Patterns',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        duration: '18:20',
-        order: 3,
-        course: course._id,
-      },
-      {
-        title: 'Prototypal Inheritance',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        duration: '14:10',
-        order: 4,
-        course: course._id,
-      },
-      {
-        title: 'ES6+ Modules & Bundling',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        duration: '16:55',
-        order: 5,
-        course: course._id,
+        title: 'Backend APIs with Node and MongoDB',
+        description:
+          'Learn how to design Express APIs, model MongoDB data, handle validation, organize controllers, seed data, and prepare services for deployment.',
+        modules: [
+          {
+            title: 'Express API Structure',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-20s-720p.mp4',
+            duration: '36:50',
+          },
+          {
+            title: 'MongoDB Schema Modeling',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-20s-360p.mp4',
+            duration: '48:15',
+          },
+          {
+            title: 'Controllers, Routes, and Services',
+            videoUrl:
+              'https://samplelib.com/mp4/sample-30s.mp4',
+            duration: '46:40',
+          },
+          {
+            title: 'Validation and Error Handling',
+            videoUrl: 'https://samplelib.com/mp4/sample-30s-720p.mp4',
+            duration: '40:25',
+          },
+          {
+            title: 'Deployment Readiness',
+            videoUrl: 'https://samplelib.com/mp4/sample-30s-360p.mp4',
+            duration: '51:30',
+          },
+        ],
       },
     ];
 
-    const modules = await Module.insertMany(modulesData);
-    console.log(`Seeded ${modules.length} modules.`);
+    const seededCourses = [];
+    let totalModules = 0;
 
-    // Link modules to course
-    course.modules = modules.map((m) => m._id);
-    await course.save();
-    console.log(`Seeded course: "${course.title}" (ID: ${course._id})`);
+    for (const courseData of coursesData) {
+      const course = await Course.create({
+        title: courseData.title,
+        description: courseData.description,
+        modules: [],
+      });
+
+      const modulesData = courseData.modules.map((moduleData, index) => ({
+        ...moduleData,
+        order: index + 1,
+        course: course._id,
+      }));
+
+      const modules = await Module.insertMany(modulesData);
+      course.modules = modules.map((module) => module._id);
+      await course.save();
+
+      totalModules += modules.length;
+      seededCourses.push(course);
+      console.log(
+        `Seeded course: "${course.title}" with ${modules.length} modules (ID: ${course._id})`
+      );
+    }
+
+    console.log(`Seeded ${seededCourses.length} courses.`);
+    console.log(`Seeded ${totalModules} modules.`);
 
     console.log('\n--- Seed Complete ---');
-    console.log(`Course ID: ${course._id}`);
-    console.log('Use this ID in your frontend VITE_COURSE_ID env variable.\n');
+    seededCourses.forEach((course, index) => {
+      console.log(`${index + 1}. ${course.title}: ${course._id}`);
+    });
+    console.log(
+      'Use any Course ID above in your frontend VITE_COURSE_ID env variable.\n'
+    );
 
     process.exit(0);
   } catch (error) {
