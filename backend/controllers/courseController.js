@@ -1,4 +1,5 @@
 const Course = require('../models/Course');
+require('../models/Module');
 
 /**
  * @desc    Fetch a single course with its ordered modules
