@@ -29,20 +29,36 @@ export const useCourse = () => {
     return new Set(Object.keys(completedModules));
   }, [completedModules]);
 
-  const boundFetchCourses = useCallback(() => {
-    dispatch(fetchCourses());
+  const boundFetchCourses = useCallback(async () => {
+    try {
+      return await dispatch(fetchCourses()).unwrap();
+    } catch (err) {
+      return [];
+    }
   }, [dispatch]);
 
-  const boundFetchCourse = useCallback((courseId) => {
-    dispatch(fetchCourse(courseId));
+  const boundFetchCourse = useCallback(async (courseId) => {
+    try {
+      return await dispatch(fetchCourse(courseId)).unwrap();
+    } catch (err) {
+      return null;
+    }
   }, [dispatch]);
 
-  const boundFetchProgress = useCallback((courseId) => {
-    dispatch(fetchProgress(courseId));
+  const boundFetchProgress = useCallback(async (courseId) => {
+    try {
+      return await dispatch(fetchProgress(courseId)).unwrap();
+    } catch (err) {
+      return null;
+    }
   }, [dispatch]);
 
-  const boundSelectCourse = useCallback((courseId) => {
-    dispatch(selectCourseAction(courseId));
+  const boundSelectCourse = useCallback(async (courseId) => {
+    try {
+      return await dispatch(selectCourseAction(courseId)).unwrap();
+    } catch (err) {
+      return null;
+    }
   }, [dispatch]);
 
   const boundMarkComplete = useCallback((moduleId) => {
