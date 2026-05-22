@@ -57,23 +57,33 @@ const VideoPlayer = () => {
 
   const handlePause = useCallback(() => {
     if (activeModule && videoRef.current) {
+      const resumePos = getResumePosition(activeModule._id);
+      if (resumePos > 0 && !hasResumedRef.current) {
+        return;
+      }
+
       const currentTime = videoRef.current.currentTime;
       if (currentTime > 0) {
         lastSavedPositionRef.current = currentTime;
         saveWatchPosition(activeModule._id, currentTime);
       }
     }
-  }, [activeModule, saveWatchPosition]);
+  }, [activeModule, saveWatchPosition, getResumePosition]);
 
   const handleTimeUpdate = useCallback(() => {
     if (activeModule && videoRef.current) {
+      const resumePos = getResumePosition(activeModule._id);
+      if (resumePos > 0 && !hasResumedRef.current) {
+        return;
+      }
+
       const currentTime = videoRef.current.currentTime;
       if (Math.abs(currentTime - lastSavedPositionRef.current) >= 5) {
         lastSavedPositionRef.current = currentTime;
         saveWatchPosition(activeModule._id, currentTime);
       }
     }
-  }, [activeModule, saveWatchPosition]);
+  }, [activeModule, saveWatchPosition, getResumePosition]);
 
   if (!activeModule) {
     return (

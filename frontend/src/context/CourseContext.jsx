@@ -26,13 +26,16 @@ export const CourseProvider = ({ children }) => {
       setCourses(data || []);
 
       if (data?.length > 0) {
-        setCourse((currentCourse) => currentCourse || data[0]);
+        const defaultCourse = data[0];
+        setCourse((currentCourse) => currentCourse || defaultCourse);
         setModules((currentModules) =>
-          currentModules.length > 0 ? currentModules : data[0].modules || []
+          currentModules.length > 0 ? currentModules : defaultCourse.modules || []
         );
         setActiveModule((currentModule) =>
-          currentModule || data[0].modules?.[0] || null
+          currentModule || defaultCourse.modules?.[0] || null
         );
+
+        await fetchProgress(defaultCourse._id);
       }
 
       return data || [];
@@ -42,7 +45,7 @@ export const CourseProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchProgress]);
 
   const fetchCourse = useCallback(async (courseId) => {
     try {
