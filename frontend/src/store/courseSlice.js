@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const USER_ID = import.meta.env.VITE_USER_ID || 'demo-user-123';
+const API_URL = import.meta.env.VITE_API_URL 
+const USER_ID = import.meta.env.VITE_USER_ID
 
 export const fetchCourses = createAsyncThunk(
   'course/fetchCourses',
@@ -204,7 +204,15 @@ const courseSlice = createSlice({
         state.percentage = action.payload.percentage || 0;
       })
       .addCase(markComplete.rejected, (state, action) => {
-        state.error = action.payload || 'Failed to complete module.';
+        const moduleId = action.meta.arg;
+        if (state.completedModules[moduleId]) {
+          delete state.completedModules[moduleId];
+          const completedCount = Object.keys(state.completedModules).length;
+          state.percentage = state.modules.length > 0
+            ? Math.round((completedCount / state.modules.length) * 100)
+            : 0;
+        }
+        state.error = action.payload || 'Failed to complete module. Progress rolled back.';
       })
       .addCase(saveWatchPosition.pending, (state, action) => {
         const { moduleId, position } = action.meta.arg;

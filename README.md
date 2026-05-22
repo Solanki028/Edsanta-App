@@ -17,7 +17,7 @@ A focused mini Learning Management System that lets users view course modules/vi
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19, Vite, Tailwind CSS, Axios, Lucide React |
+| Frontend | React 19, Redux Toolkit, React-Redux, Vite, Tailwind CSS, Axios, Lucide React |
 | Backend | Node.js, Express 5, Mongoose 9 |
 | Database | MongoDB |
 | Deployment | Netlify (frontend) + Render (backend) |
@@ -49,8 +49,11 @@ A focused mini Learning Management System that lets users view course modules/vi
 │   │   │   ├── CourseSidebar.jsx  # Module list with status icons
 │   │   │   ├── VideoPlayer.jsx    # HTML5 video + mark complete
 │   │   │   └── ProgressBar.jsx    # Global completion bar
-│   │   ├── context/
-│   │   │   └── CourseContext.jsx   # Shared state + optimistic updates
+│   │   ├── store/
+│   │   │   ├── index.js           # Central Redux store
+│   │   │   └── courseSlice.js     # Redux slice for courses/progress thunks
+│   │   ├── hooks/
+│   │   │   └── useCourse.js       # Hook bridging Redux state to UI components
 │   │   ├── pages/
 │   │   │   └── CoursePage.jsx     # Main two-pane layout
 │   │   ├── App.jsx
@@ -139,9 +142,11 @@ docker compose down -v
 
 | Method | Endpoint | Description |
 |---|---|---|
+| `GET` | `/api/courses` | Fetch all courses |
 | `GET` | `/api/courses/:id` | Fetch course details with ordered modules |
 | `GET` | `/api/progress/:userId/:courseId` | Fetch user's completion status |
 | `PUT` | `/api/progress/:userId/:moduleId` | Mark a module as complete |
+| `PUT` | `/api/progress/:userId/:moduleId/position` | Save last watched video position |
 
 ### Example: Fetch Course
 
