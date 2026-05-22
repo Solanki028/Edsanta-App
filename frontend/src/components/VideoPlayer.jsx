@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { useCourse } from '../context/CourseContext';
+import { useCourse } from '../hooks/useCourse';
 import { CheckCircle } from 'lucide-react';
 
 const VideoPlayer = () => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useCourse } from '../context/CourseContext';
+import { useCourse } from '../hooks/useCourse';
 import ProgressBar from '../components/ProgressBar';
 import CourseSidebar from '../components/CourseSidebar';
 import VideoPlayer from '../components/VideoPlayer';

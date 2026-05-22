@@ -1,0 +1,83 @@
+import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchCourses,
+  fetchCourse,
+  fetchProgress,
+  selectCourse as selectCourseAction,
+  markComplete as markCompleteAction,
+  saveWatchPosition as saveWatchPositionAction,
+  setActiveModule as setActiveModuleAction,
+} from '../store/courseSlice';
+
+export const useCourse = () => {
+  const dispatch = useDispatch();
+
+  const {
+    courses,
+    course,
+    modules,
+    activeModule,
+    completedModules,
+    percentage,
+    lastWatchedPositions,
+    loading,
+    error,
+  } = useSelector((state) => state.course);
+
+  const memoizedCompletedSet = useMemo(() => {
+    return new Set(Object.keys(completedModules));
+  }, [completedModules]);
+
+  const boundFetchCourses = useCallback(() => {
+    dispatch(fetchCourses());
+  }, [dispatch]);
+
+  const boundFetchCourse = useCallback((courseId) => {
+    dispatch(fetchCourse(courseId));
+  }, [dispatch]);
+
+  const boundFetchProgress = useCallback((courseId) => {
+    dispatch(fetchProgress(courseId));
+  }, [dispatch]);
+
+  const boundSelectCourse = useCallback((courseId) => {
+    dispatch(selectCourseAction(courseId));
+  }, [dispatch]);
+
+  const boundMarkComplete = useCallback((moduleId) => {
+    dispatch(markCompleteAction(moduleId));
+  }, [dispatch]);
+
+  const boundSaveWatchPosition = useCallback((moduleId, position) => {
+    dispatch(saveWatchPositionAction({ moduleId, position }));
+  }, [dispatch]);
+
+  const boundGetResumePosition = useCallback((moduleId) => {
+    return lastWatchedPositions[moduleId] || 0;
+  }, [lastWatchedPositions]);
+
+  const boundSetActiveModule = useCallback((module) => {
+    dispatch(setActiveModuleAction(module));
+  }, [dispatch]);
+
+  return {
+    courses,
+    course,
+    modules,
+    activeModule,
+    completedModules: memoizedCompletedSet,
+    percentage,
+    loading,
+    error,
+    userId: import.meta.env.VITE_USER_ID || 'demo-user-123',
+    setActiveModule: boundSetActiveModule,
+    fetchCourses: boundFetchCourses,
+    fetchCourse: boundFetchCourse,
+    fetchProgress: boundFetchProgress,
+    selectCourse: boundSelectCourse,
+    markComplete: boundMarkComplete,
+    saveWatchPosition: boundSaveWatchPosition,
+    getResumePosition: boundGetResumePosition,
+  };
+};

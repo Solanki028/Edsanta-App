@@ -1,4 +1,4 @@
-import { useCourse } from '../context/CourseContext';
+import { useCourse } from '../hooks/useCourse';
 
 const ProgressBar = () => {
   const { modules, completedModules, percentage } = useCourse();

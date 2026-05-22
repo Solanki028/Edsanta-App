@@ -1,11 +1,12 @@
-import { CourseProvider } from './context/CourseContext';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import CoursePage from './pages/CoursePage';
 
 function App() {
   return (
-    <CourseProvider>
+    <Provider store={store}>
       <CoursePage />
-    </CourseProvider>
+    </Provider>
   );
 }
 

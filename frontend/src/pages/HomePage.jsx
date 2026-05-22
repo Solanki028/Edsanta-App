@@ -13,7 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useCourse } from '../context/CourseContext';
+import { useCourse } from '../hooks/useCourse';
 
 const COURSE_IMAGE_EXTENSIONS = ['jpg', 'png', 'webp', 'svg'];
 const DEFAULT_COURSE_IMAGE = '/course-images/default.svg';

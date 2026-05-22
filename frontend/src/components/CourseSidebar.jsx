@@ -1,4 +1,4 @@
-import { useCourse } from '../context/CourseContext';
+import { useCourse } from '../hooks/useCourse';
 import { CheckCircle, Circle, PlayCircle } from 'lucide-react';
 
 const CourseSidebar = () => {
