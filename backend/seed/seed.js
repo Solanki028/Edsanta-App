@@ -27,31 +27,31 @@ const seedData = async () => {
           {
             title: 'Closures, Scope Chains, and Memory',
             videoUrl:
-              'https://samplelib.com/mp4/sample-5s.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '42:15',
           },
           {
             title: 'Promises, Jobs, and the Event Loop',
             videoUrl:
-              'https://samplelib.com/mp4/sample-5s-720p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '38:40',
           },
           {
             title: 'Async/Await Error Handling Patterns',
             videoUrl:
-              'https://samplelib.com/mp4/sample-5s-360p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '45:25',
           },
           {
             title: 'Prototypes, Classes, and Composition',
             videoUrl:
-              'https://samplelib.com/mp4/sample-10s.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '41:10',
           },
           {
             title: 'ES Modules, Bundling, and Tooling',
             videoUrl:
-              'https://samplelib.com/mp4/sample-10s-720p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '47:35',
           },
         ],
@@ -64,31 +64,31 @@ const seedData = async () => {
           {
             title: 'Component Design Systems',
             videoUrl:
-              'https://samplelib.com/mp4/sample-10s-360p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '44:20',
           },
           {
             title: 'Hooks and Data Flow',
             videoUrl:
-              'https://samplelib.com/mp4/sample-15s.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '39:55',
           },
           {
             title: 'Client State and Server State',
             videoUrl:
-              'https://samplelib.com/mp4/sample-15s-720p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '52:45',
           },
           {
             title: 'Responsive Interface Patterns',
             videoUrl:
-              'https://samplelib.com/mp4/sample-15s-360p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '43:30',
           },
           {
             title: 'Performance and Production Builds',
             videoUrl:
-              'https://samplelib.com/mp4/sample-20s.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '49:05',
           },
         ],
@@ -101,29 +101,29 @@ const seedData = async () => {
           {
             title: 'Express API Structure',
             videoUrl:
-              'https://samplelib.com/mp4/sample-20s-720p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '36:50',
           },
           {
             title: 'MongoDB Schema Modeling',
             videoUrl:
-              'https://samplelib.com/mp4/sample-20s-360p.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '48:15',
           },
           {
             title: 'Controllers, Routes, and Services',
             videoUrl:
-              'https://samplelib.com/mp4/sample-30s.mp4',
+              'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '46:40',
           },
           {
             title: 'Validation and Error Handling',
-            videoUrl: 'https://samplelib.com/mp4/sample-30s-720p.mp4',
+            videoUrl: 'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '40:25',
           },
           {
             title: 'Deployment Readiness',
-            videoUrl: 'https://samplelib.com/mp4/sample-30s-360p.mp4',
+            videoUrl: 'https://cdn.teachertube.com/uploads/videos/2022/10/08/511575/my-movie-11.mp4',
             duration: '51:30',
           },
         ],
