@@ -1,9 +1,5 @@
 import { useCourse } from '../context/CourseContext';
 
-/**
- * Global progress bar displaying course completion percentage.
- * Updates instantly via optimistic UI.
- */
 const ProgressBar = () => {
   const { modules, completedModules, percentage } = useCourse();
 

@@ -4,7 +4,7 @@ import axios from 'axios';
 const CourseContext = createContext();
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const USER_ID = import.meta.env.VITE_USER_ID || 'demo-user-123'; // Safe env-configurable user reference
+const USER_ID = import.meta.env.VITE_USER_ID || 'demo-user-123';
 
 export const CourseProvider = ({ children }) => {
   const [courses, setCourses] = useState([]);
@@ -17,9 +17,6 @@ export const CourseProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  /**
-   * Fetch catalog data for the home page.
-   */
   const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
@@ -40,7 +37,6 @@ export const CourseProvider = ({ children }) => {
 
       return data || [];
     } catch (err) {
-      console.error('Error fetching courses:', err);
       setError(err.response?.data?.message || 'Failed to load courses');
       return [];
     } finally {
@@ -48,9 +44,6 @@ export const CourseProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Fetch course data with populated modules
-   */
   const fetchCourse = useCallback(async (courseId) => {
     try {
       setLoading(true);
@@ -60,7 +53,6 @@ export const CourseProvider = ({ children }) => {
       setCourse(data);
       setModules(data.modules || []);
 
-      // Set first module as active by default
       if (data.modules?.length > 0) {
         setActiveModule(data.modules[0]);
       } else {
@@ -72,7 +64,6 @@ export const CourseProvider = ({ children }) => {
       setLastWatchedPositions({});
       return data;
     } catch (err) {
-      console.error('Error fetching course:', err);
       setError(err.response?.data?.message || 'Failed to load course data');
       return null;
     } finally {
@@ -80,9 +71,6 @@ export const CourseProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Fetch user's progress for the course
-   */
   const fetchProgress = useCallback(async (courseId) => {
     try {
       const { data } = await axios.get(
@@ -95,7 +83,6 @@ export const CourseProvider = ({ children }) => {
       setCompletedModules(completedSet);
       setPercentage(data.percentage || 0);
 
-      // Bonus: Restore last watched positions
       if (data.lastWatchedPositions) {
         const positions =
           data.lastWatchedPositions instanceof Map
@@ -104,8 +91,6 @@ export const CourseProvider = ({ children }) => {
         setLastWatchedPositions(positions);
       }
     } catch (err) {
-      console.error('Error fetching progress:', err);
-      // Non-critical: progress starts at 0 if fetch fails
     }
   }, []);
 
@@ -135,21 +120,13 @@ export const CourseProvider = ({ children }) => {
     [courses, fetchCourse, fetchProgress]
   );
 
-  /**
-   * Mark a module as complete — uses OPTIMISTIC UI UPDATE
-   * 1. Instantly update local state (snappy UX)
-   * 2. Send PUT request to backend
-   * 3. Rollback on failure
-   */
   const markComplete = useCallback(
     async (moduleId) => {
-      if (completedModules.has(moduleId)) return; // Already completed
+      if (completedModules.has(moduleId)) return;
 
-      // --- Snapshot previous state for rollback ---
       const prevCompleted = new Set(completedModules);
       const prevPercentage = percentage;
 
-      // --- Optimistic update ---
       const newCompleted = new Set(completedModules);
       newCompleted.add(moduleId);
       const newPercentage = Math.round(
@@ -159,32 +136,24 @@ export const CourseProvider = ({ children }) => {
       setPercentage(newPercentage);
 
       try {
-        // --- Send to backend ---
         await axios.put(`${API_URL}/api/progress/${USER_ID}/${moduleId}`, {
           courseId: course._id,
         });
       } catch (err) {
-        // --- Rollback on failure ---
-        console.error('Error marking complete, rolling back:', err);
         setCompletedModules(prevCompleted);
         setPercentage(prevPercentage);
         setError('Failed to save progress. Please try again.');
 
-        // Auto-clear error after 3 seconds
         setTimeout(() => setError(null), 3000);
       }
     },
     [completedModules, percentage, modules.length, course]
   );
 
-  /**
-   * Bonus: Save the last watched position for a module
-   */
   const saveWatchPosition = useCallback(
     async (moduleId, position) => {
       setLastWatchedPositions((prev) => ({ ...prev, [moduleId]: position }));
 
-      // Fire-and-forget save to backend (non-blocking)
       try {
         await axios.put(
           `${API_URL}/api/progress/${USER_ID}/${moduleId}/position`,
@@ -194,15 +163,11 @@ export const CourseProvider = ({ children }) => {
           }
         );
       } catch (err) {
-        console.error('Error saving watch position:', err);
       }
     },
     [course]
   );
 
-  /**
-   * Get the resume position for a specific module
-   */
   const getResumePosition = useCallback(
     (moduleId) => {
       return lastWatchedPositions[moduleId] || 0;
@@ -235,7 +200,6 @@ export const CourseProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useCourse = () => {
   const context = useContext(CourseContext);
   if (!context) {

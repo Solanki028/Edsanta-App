@@ -21,7 +21,6 @@ const progressSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-     
     lastWatchedPositions: {
       type: Map,
       of: Number,
@@ -33,7 +32,6 @@ const progressSchema = mongoose.Schema(
   }
 );
 
-// Compound unique index for O(1) lookups and to guarantee user-course uniqueness constraints
 progressSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 
 const Progress = mongoose.model('Progress', progressSchema);

@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # 1. MongoDB Service
   mongodb:
     image: mongo:7.0-noble
     container_name: lms_mongodb
@@ -13,7 +12,6 @@ services:
       - lms_network
     restart: always
 
-  # 2. Express Backend API Service
   backend:
     build:
       context: ./backend
@@ -31,7 +29,6 @@ services:
       - lms_network
     restart: always
 
-  # 3. React Frontend Nginx Web Server
   frontend:
     build:
       context: ./frontend

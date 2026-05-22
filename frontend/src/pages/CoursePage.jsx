@@ -6,11 +6,6 @@ import CourseSidebar from '../components/CourseSidebar';
 import VideoPlayer from '../components/VideoPlayer';
 import HomePage from './HomePage';
 
-/**
- * Main course page with two-pane layout:
- * - ProgressBar at top
- * - CourseSidebar (left) + VideoPlayer (right)
- */
 const CoursePage = () => {
   const { course, loading, error, fetchCourses, selectCourse } = useCourse();
   const [isCourseOpen, setIsCourseOpen] = useState(false);
@@ -72,10 +67,8 @@ const CoursePage = () => {
         </p>
       </div>
 
-      {/* Global Progress Bar */}
       <ProgressBar />
 
-      {/* Two-Pane Layout */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <CourseSidebar />
         <VideoPlayer />

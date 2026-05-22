@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Load env from parent directory
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const Course = require('../models/Course');
@@ -14,7 +13,6 @@ const seedData = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB connected for seeding...');
 
-    // Clear existing data
     await Course.deleteMany({});
     await Module.deleteMany({});
     await Progress.deleteMany({});

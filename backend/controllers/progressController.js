@@ -1,7 +1,6 @@
 const Progress = require('../models/Progress');
 const Course = require('../models/Course');
 
- 
 const getProgress = async (req, res) => {
   try {
     const { userId, courseId } = req.params;
@@ -24,7 +23,6 @@ const getProgress = async (req, res) => {
   }
 };
 
- 
 const markModuleComplete = async (req, res) => {
   try {
     const { userId, moduleId } = req.params;
@@ -45,7 +43,6 @@ const markModuleComplete = async (req, res) => {
       });
     }
 
-    // Add module to completed list if not already present
     const alreadyCompleted = progress.completedModules
       .map((id) => id.toString())
       .includes(moduleId);
@@ -54,7 +51,6 @@ const markModuleComplete = async (req, res) => {
       progress.completedModules.push(moduleId);
     }
 
-    // Recalculate completion percentage
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -72,7 +68,6 @@ const markModuleComplete = async (req, res) => {
   }
 };
 
- 
 const saveWatchPosition = async (req, res) => {
   try {
     const { userId, moduleId } = req.params;
@@ -87,8 +82,6 @@ const saveWatchPosition = async (req, res) => {
       return res.status(400).json({ message: 'position must be a valid number' });
     }
 
-    // Atomic update using MongoDB $set operator on the specific subfield key
-    // This avoids fetching the entire document and running an expensive save() cycle
     const progress = await Progress.findOneAndUpdate(
       { userId, courseId },
       { $set: { [`lastWatchedPositions.${moduleId}`]: numericPosition } },
