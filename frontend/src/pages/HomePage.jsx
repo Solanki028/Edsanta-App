@@ -12,16 +12,46 @@ import {
   Target,
   Users,
 } from 'lucide-react';
+import { useState } from 'react';
 import { useCourse } from '../context/CourseContext';
 
-const courseImage =
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80';
+const COURSE_IMAGE_EXTENSIONS = ['jpg', 'png', 'webp', 'svg'];
+const DEFAULT_COURSE_IMAGE = '/course-images/default.svg';
 
-const courseImages = [
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80',
-  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
-  'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80',
-];
+const slugifyCourseTitle = (title = '') =>
+  title
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const CourseImage = ({ title, className, alt = '' }) => {
+  const [extensionIndex, setExtensionIndex] = useState(0);
+  const slug = slugifyCourseTitle(title);
+  const extension = COURSE_IMAGE_EXTENSIONS[extensionIndex];
+  const src =
+    slug && extension
+      ? `/course-images/${slug}.${extension}`
+      : DEFAULT_COURSE_IMAGE;
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={(event) => {
+        if (extensionIndex < COURSE_IMAGE_EXTENSIONS.length - 1) {
+          setExtensionIndex((currentIndex) => currentIndex + 1);
+          return;
+        }
+
+        event.currentTarget.onerror = null;
+        event.currentTarget.src = DEFAULT_COURSE_IMAGE;
+      }}
+    />
+  );
+};
 
 const formatCreatedDate = (dateValue) => {
   if (!dateValue) return 'Recently added';
@@ -166,9 +196,9 @@ const HomePage = ({ onStartCourse }) => {
 
           <article className="rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm">
             <div className="relative">
-              <img
-                src={courseImage}
-                alt="Student learning online with a laptop"
+              <CourseImage
+                title={highlightedCourse?.title}
+                alt={highlightedCourse?.title || 'Featured course'}
                 className="h-64 sm:h-80 w-full object-cover"
               />
               <div className="absolute left-4 top-4 rounded-lg bg-white/95 px-3 py-2 shadow-sm">
@@ -250,18 +280,16 @@ const HomePage = ({ onStartCourse }) => {
           </div>
         ) : (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {courses.map((item, index) => {
+            {courses.map((item) => {
               const itemDuration = formatTotalDuration(item.modules || []);
-              const image = courseImages[index % courseImages.length];
-
               return (
                 <article
                   key={item._id}
                   className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm"
                 >
-                  <img
-                    src={image}
-                    alt=""
+                  <CourseImage
+                    title={item.title}
+                    alt={item.title}
                     className="h-44 w-full object-cover"
                   />
                   <div className="p-5">
