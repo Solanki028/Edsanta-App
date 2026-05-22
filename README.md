@@ -9,7 +9,7 @@ A focused mini Learning Management System that lets users view course modules/vi
 - **Completion tracking** — Mark modules as complete with visual indicators (✓ green checkmark / grey circle)
 - **Global progress bar** — Shows "X of Y videos completed — Z%" with animated fill
 - **Optimistic UI updates** — Progress updates instantly without waiting for API; rolls back on failure
-- **Video Resume State** *(Bonus)* — Automatically saves your position when you pause, and resumes from that exact timestamp when you revisit a module
+- **Video Resume State**  — Automatically saves your position when you pause, and resumes from that exact timestamp when you revisit a module
 - **Proper error handling** — Frontend rollback on API failure + error toast notifications
 - **Seed script** — Demo data ready to test immediately after setup
 
@@ -70,34 +70,69 @@ A focused mini Learning Management System that lets users view course modules/vi
 ### Prerequisites
 
 - Node.js (v18+)
-- MongoDB Atlas account (or local MongoDB instance)
+- MongoDB (Atlas or local instance)
+- *Optional:* Docker & Docker Compose (for containerized setup)
 
-### 1. Backend Setup
+### Option A: Standard Manual Setup
 
+#### 1. Backend Setup
+
+1. Navigate to the `backend/` directory:
+   ```bash
+   cd backend
+   ```
+2. Create a `.env` file and set the required variables:
+   ```env
+   PORT=5000
+   MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/edsanta
+   ```
+3. Install dependencies, seed the database, and start the development server:
+   ```bash
+   npm install
+   npm run seed    # Seeds courses and video modules
+   npm run dev     # Starts API on http://localhost:5000
+   ```
+   *Note: Copy the printed **Course ID** from the seed output to paste into your frontend environment.*
+
+#### 2. Frontend Setup
+
+1. Navigate to the `frontend/` directory:
+   ```bash
+   cd frontend
+   ```
+2. Create a `.env` file and set your environment variables:
+   ```env
+   VITE_API_URL=http://localhost:5000
+   VITE_COURSE_ID=<paste_course_id_from_seed_step>
+   VITE_USER_ID=demo-user-123
+   ```
+3. Install dependencies and start the Vite development server:
+   ```bash
+   npm install
+   npm run dev     # Starts web app on http://localhost:5173
+   ```
+
+---
+
+### Option B: Quick Docker Setup (Bonus Point Submission)
+
+To compile and launch the entire multi-service stack (MongoDB, Express API, React SPA served via Nginx) in a fully sandboxed environment:
+
+1. Build and run the containers in the background from the root directory:
+   ```bash
+   docker compose up -d --build
+   ```
+2. Run the database seed script inside the running backend container:
+   ```bash
+   docker compose exec backend npm run seed
+   ```
+3. Access the services in your browser:
+   - **Frontend App:** http://localhost:5173
+   - **Backend Health Check:** http://localhost:5000
+
+To stop all container services, run:
 ```bash
-cd backend
-cp .env.example .env
-# Edit .env with your MongoDB URI:
-# MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/mini-lms
-
-npm install
-npm run seed    # Seeds 1 course with 5 video modules
-npm run dev     # Starts server on port 5000
-```
-
-After seeding, copy the **Course ID** from the terminal output.
-
-### 2. Frontend Setup
-
-```bash
-cd frontend
-cp .env.example .env
-# Edit .env:
-# VITE_API_URL=http://localhost:5000
-# VITE_COURSE_ID=<paste_course_id_from_seed>
-
-npm install
-npm run dev     # Starts on http://localhost:5173
+docker compose down -v
 ```
 
 ## 📡 API Endpoints

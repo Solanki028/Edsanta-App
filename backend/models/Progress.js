@@ -21,7 +21,7 @@ const progressSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // Bonus: Video Resume State — stores last watched position per module
+     
     lastWatchedPositions: {
       type: Map,
       of: Number,
@@ -32,6 +32,9 @@ const progressSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Compound unique index for O(1) lookups and to guarantee user-course uniqueness constraints
+progressSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 
 const Progress = mongoose.model('Progress', progressSchema);
 

@@ -166,9 +166,7 @@ const seedData = async () => {
     seededCourses.forEach((course, index) => {
       console.log(`${index + 1}. ${course.title}: ${course._id}`);
     });
-    console.log(
-      'Use any Course ID above in your frontend VITE_COURSE_ID env variable.\n'
-    );
+   
 
     process.exit(0);
   } catch (error) {

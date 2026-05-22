@@ -1,11 +1,7 @@
 const Progress = require('../models/Progress');
 const Course = require('../models/Course');
 
-/**
- * @desc    Get user's progress for a specific course
- * @route   GET /api/progress/:userId/:courseId
- * @access  Public
- */
+ 
 const getProgress = async (req, res) => {
   try {
     const { userId, courseId } = req.params;
@@ -28,11 +24,7 @@ const getProgress = async (req, res) => {
   }
 };
 
-/**
- * @desc    Mark a module as complete for a user
- * @route   PUT /api/progress/:userId/:moduleId
- * @access  Public
- */
+ 
 const markModuleComplete = async (req, res) => {
   try {
     const { userId, moduleId } = req.params;
@@ -80,11 +72,7 @@ const markModuleComplete = async (req, res) => {
   }
 };
 
-/**
- * @desc    Save a user's last watched timestamp for a module
- * @route   PUT /api/progress/:userId/:moduleId/position
- * @access  Public
- */
+ 
 const saveWatchPosition = async (req, res) => {
   try {
     const { userId, moduleId } = req.params;
@@ -99,19 +87,13 @@ const saveWatchPosition = async (req, res) => {
       return res.status(400).json({ message: 'position must be a valid number' });
     }
 
-    let progress = await Progress.findOne({ userId, courseId });
-
-    if (!progress) {
-      progress = new Progress({
-        userId,
-        courseId,
-        completedModules: [],
-        lastWatchedPositions: new Map(),
-      });
-    }
-
-    progress.lastWatchedPositions.set(moduleId, numericPosition);
-    await progress.save();
+    // Atomic update using MongoDB $set operator on the specific subfield key
+    // This avoids fetching the entire document and running an expensive save() cycle
+    const progress = await Progress.findOneAndUpdate(
+      { userId, courseId },
+      { $set: { [`lastWatchedPositions.${moduleId}`]: numericPosition } },
+      { new: true, upsert: true }
+    );
 
     res.json(progress);
   } catch (error) {

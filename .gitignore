@@ -35,11 +35,19 @@ pnpm-debug.log*
 **/.env
 **/.env.*
 
-# Editor directories
+# Editor directories and caches
 .idea/
 .vscode/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.eslintcache
+.vite/
+desktop.ini
+*.log
 
 # Backend specific
 backend/.env

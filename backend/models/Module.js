@@ -28,6 +28,9 @@ const moduleSchema = mongoose.Schema(
   }
 );
 
+// Index to optimize module ordering and lookup by course
+moduleSchema.index({ course: 1, order: 1 });
+
 const Module = mongoose.model('Module', moduleSchema);
 
 module.exports = Module;

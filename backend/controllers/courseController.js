@@ -1,11 +1,7 @@
 const Course = require('../models/Course');
 require('../models/Module');
 
-/**
- * @desc    Fetch all courses with ordered modules
- * @route   GET /api/courses
- * @access  Public
- */
+ 
 const getCourses = async (req, res) => {
   try {
     const courses = await Course.find({})
@@ -22,11 +18,7 @@ const getCourses = async (req, res) => {
   }
 };
 
-/**
- * @desc    Fetch a single course with its ordered modules
- * @route   GET /api/courses/:id
- * @access  Public
- */
+ 
 const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id).populate({

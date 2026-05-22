@@ -4,7 +4,7 @@ import axios from 'axios';
 const CourseContext = createContext();
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const USER_ID = 'demo-user-123'; // Hardcoded userId (no auth required per assessment)
+const USER_ID = import.meta.env.VITE_USER_ID || 'demo-user-123'; // Safe env-configurable user reference
 
 export const CourseProvider = ({ children }) => {
   const [courses, setCourses] = useState([]);
