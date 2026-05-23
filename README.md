@@ -117,7 +117,7 @@ A focused mini Learning Management System that lets users view course modules/vi
 
 ---
 
-### Option B: Quick Docker Setup (Bonus Point Submission)
+### Option B: Quick Docker Setup
 
 To compile and launch the entire multi-service stack (MongoDB, Express API, React SPA served via Nginx) in a fully sandboxed environment:
 
